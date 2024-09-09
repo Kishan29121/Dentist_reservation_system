@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class MainGUI extends JFrame {
 
-private static final String STAFF_PASSWORD = "staff123";
+private static String STAFF_PASSWORD = "staff123";
 private Map<String, String> patientAccounts = new HashMap<>();
 private String currentProfile = "";
 
@@ -35,10 +35,10 @@ public MainGUI() {
     panel.add(profilePanel, BorderLayout.NORTH);
 
     // Create profile selection buttons
-    JButton staffButton = new JButton("Staff");
+ 
     JButton patientButton = new JButton("Patient");
 
-    profilePanel.add(staffButton);
+  
     profilePanel.add(patientButton);
 
     // Create a panel for the staff profiles
@@ -50,8 +50,8 @@ public MainGUI() {
     JButton doctorButton = new JButton("Doctor");
     JButton receptionistButton = new JButton("Receptionist");
 
-    staffProfilePanel.add(doctorButton);
-    staffProfilePanel.add(receptionistButton);
+    profilePanel.add(doctorButton);
+    profilePanel.add(receptionistButton);
 
     // Create a panel for the login form fields
     JPanel fieldsPanel = new JPanel();
@@ -59,20 +59,20 @@ public MainGUI() {
     loginPanel.add(fieldsPanel);
 
     // Create login form fields
-    JLabel userLabel = new JLabel("User");
-    userLabel.setBounds(10, 20, 80, 25);
+    JLabel userLabel = new JLabel("Patient ID: ");
+    userLabel.setBounds(10, 20, 120, 25);
     fieldsPanel.add(userLabel);
 
     JTextField userText = new JTextField(25);
-    userText.setBounds(100, 20, 165, 25);
+    userText.setBounds(120, 20, 200, 25);
     fieldsPanel.add(userText);
 
-    JLabel passwordLabel = new JLabel("Password");
-    passwordLabel.setBounds(10, 50, 80, 25);
+    JLabel passwordLabel = new JLabel("Password: ");
+    passwordLabel.setBounds(10, 50, 120, 25);
     fieldsPanel.add(passwordLabel);
 
     JPasswordField passwordText = new JPasswordField(25);
-    passwordText.setBounds(100, 50, 165, 25);
+    passwordText.setBounds(120, 50, 200, 25);
     fieldsPanel.add(passwordText);
 
     // Create a panel for the login button
@@ -84,12 +84,9 @@ public MainGUI() {
     loginButton.setBounds(10, 10, 80, 25);
     buttonPanel.add(loginButton);
 
-    JButton addButton = new JButton("Add Patient");
-    addButton.setBounds(100, 10, 100, 25);
-    buttonPanel.add(addButton);
-
+    
     JButton changePasswordButton = new JButton("Change Password");
-    changePasswordButton.setBounds(210, 10, 120, 25);
+    changePasswordButton.setBounds(210, 10, 150, 25);
     buttonPanel.add(changePasswordButton);
 
     // Set bounds for the panels
@@ -97,34 +94,28 @@ public MainGUI() {
     buttonPanel.setBounds(10, 120, 350, 40);
 
     // Add action listeners to the profile selection buttons
-    staffButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            staffProfilePanel.setVisible(true);
-            patientButton.setVisible(false);
-        }
-    });
-
-    patientButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Patient ID");
-            passwordLabel.setText("Patient Password");
-            currentProfile = "patient";
-            staffButton.setVisible(false);
-        }
-    });
+   
 
     doctorButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Doctor ID");
-            passwordLabel.setText("Doctor Password");
+            userLabel.setText("Doctor ID: ");
+            passwordLabel.setText("Password: ");
             currentProfile = "doctor";
+        }
+    });
+    
+    patientButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            userLabel.setText("Patient ID: ");
+            passwordLabel.setText("Password: ");
+            currentProfile = "patient";
         }
     });
 
     receptionistButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Receptionist ID");
-            passwordLabel.setText("Receptionist Password");
+            userLabel.setText("Receptionist ID: ");
+            passwordLabel.setText("Password: ");
             currentProfile = "receptionist";
         }
     });
@@ -144,12 +135,15 @@ public MainGUI() {
                     } else {
                         JOptionPane.showMessageDialog(panel, "Invalid password for Staff");
                     }
-                } else if (currentProfile.equals("patient")) {
-                    if (patientAccounts.containsKey(username) && patientAccounts.get(username.equals(password)); {
+                }else if (currentProfile.equals("patient")) {
+                    String storedPassword = patientAccounts.get(username);
+                    if (storedPassword != null && storedPassword.equals(password)) {
                         JOptionPane.showMessageDialog(panel, "Login Successful as Patient");
                     } else {
                         JOptionPane.showMessageDialog(panel, "Invalid username or password for Patient");
                     }
+                
+                	
                 } else if (currentProfile.equals("doctor")) {
                     if (password.equals("doctor123")) {
                         JOptionPane.showMessageDialog(panel, "Login Successful as Doctor");
@@ -168,17 +162,7 @@ public MainGUI() {
     });
 
     // Add action listener to the add patient button
-    addButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            String patientId = JOptionPane.showInputDialog(panel, "Enter Patient ID");
-            String patientPassword = JOptionPane.showInputDialog(panel, "Enter Patient Password");
-
-            if (patientId != null && patientPassword != null) {
-                patientAccounts.put(patientId, patientPassword);
-                JOptionPane.showMessageDialog(panel, "Patient added successfully");
-            }
-        }
-    });
+   
 
     // Add action listener to the change password button
     changePasswordButton.addActionListener(new ActionListener() {
