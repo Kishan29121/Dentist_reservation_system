@@ -83,7 +83,10 @@ public MainGUI() {
     JButton loginButton = new JButton("Login");
     loginButton.setBounds(10, 10, 80, 25);
     buttonPanel.add(loginButton);
-
+    
+    JButton registrationButton = new JButton("Register");
+    registrationButton.setBounds(110, 10, 80, 25);
+    buttonPanel.add(registrationButton);
     
     JButton changePasswordButton = new JButton("Change Password");
     changePasswordButton.setBounds(210, 10, 150, 25);
@@ -101,6 +104,7 @@ public MainGUI() {
             userLabel.setText("Doctor ID: ");
             passwordLabel.setText("Password: ");
             currentProfile = "doctor";
+            registrationButton.setVisible(false);
         }
     });
     
@@ -109,6 +113,7 @@ public MainGUI() {
             userLabel.setText("Patient ID: ");
             passwordLabel.setText("Password: ");
             currentProfile = "patient";
+            registrationButton.setVisible(true);
         }
     });
 
@@ -117,6 +122,7 @@ public MainGUI() {
             userLabel.setText("Receptionist ID: ");
             passwordLabel.setText("Password: ");
             currentProfile = "receptionist";
+            registrationButton.setVisible(false);
         }
     });
 
@@ -160,8 +166,80 @@ public MainGUI() {
             }
         }
     });
+    
+    registrationButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			JFrame frame = new JFrame("Registration Form");
+			    frame.setSize(450, 300);
+			    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			    
+			    JPanel registerpanel = new JPanel();
+			    registerpanel.setLayout(new BorderLayout());
+			    frame.add(registerpanel, BorderLayout.CENTER);
+			    frame.setVisible(true);
+			    
+			    
+			    JPanel registerFieldpanel = new JPanel();
+			    registerFieldpanel.setLayout(null);
+			    registerpanel.add(registerFieldpanel);
+			    
+			    JLabel nameLabel = new JLabel("Name: ");
+			    nameLabel.setBounds(50, 20, 120, 25);
+			    registerFieldpanel.add(nameLabel);
+			    
+			    JTextField nameText = new JTextField(25);
+			    nameText.setBounds(150, 20, 230, 25);
+			    registerFieldpanel.add(nameText);
+			    
+			    JLabel BirthDate = new JLabel("<html>Birth Date<br>(dd,mm,yyyy): </html>");
+			    BirthDate.setBounds(50, 50, 120, 30);
+			    registerFieldpanel.add(BirthDate);
+			    
+			    JTextField DOB = new JTextField(25);
+			    DOB.setBounds(150, 50, 230, 25);
+			    registerFieldpanel.add(DOB);
+			    
+			    JLabel PhonenumberLabel = new JLabel("Phone Number: ");
+			    PhonenumberLabel.setBounds(50, 90, 120, 25);
+			    registerFieldpanel.add(PhonenumberLabel);
+			    
+			    JTextField Phonenumber = new JTextField(25);
+			    Phonenumber.setBounds(150, 90, 230, 25);
+			    registerFieldpanel.add(Phonenumber);
+			    
+			    JLabel EMailLabel = new JLabel("Email:");
+			    EMailLabel.setBounds(50, 120, 120, 25);
+			    registerFieldpanel.add(EMailLabel);
+			    
+			    JTextField EmailID = new JTextField(25);
+			    EmailID.setBounds(150, 120, 230, 25);
+			    registerFieldpanel.add(EmailID);
+			    
+			    JLabel PasswordLabel = new JLabel("Password: ");
+			    PasswordLabel.setBounds(50, 150, 120, 25);
+			    registerFieldpanel.add(PasswordLabel);
+			    
+			    JTextField PasswordText = new JTextField(25);
+			    PasswordText.setBounds(150, 150, 230, 25);
+			    registerFieldpanel.add(PasswordText);
+			    
+			    JButton RegisterButton = new JButton("Register");
+			    RegisterButton.setBounds(180, 200, 150, 25);
+			    registerFieldpanel.add(RegisterButton);
+			    
+			    
+			    
+			    
 
-    // Add action listener to the add patient button
+			    
+			
+			
+			
+		}
+    	
+    });
+
+   
    
 
     // Add action listener to the change password button
