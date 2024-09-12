@@ -227,6 +227,26 @@ public MainGUI() {
 			    RegisterButton.setBounds(180, 200, 150, 25);
 			    registerFieldpanel.add(RegisterButton);
 			    
+			    RegisterButton.addActionListener(new ActionListener() {
+			    	public void actionPerformed(ActionEvent e) {
+			    		String name = nameText.getText();
+			    		String BirthDate = DOB.getText();
+			    		String PhoneNumber = Phonenumber.getText();
+			    		String Email = EmailID.getText();
+			    		String Password = passwordLabel.getText();
+			    		
+			    		if (name.isEmpty() || BirthDate.isEmpty() || PhoneNumber.isEmpty() || Email.isEmpty() || Password.isEmpty()) {
+					    	JOptionPane.showMessageDialog(frame, "Please fill up all the fields.");
+					    } else {
+					    	JOptionPane.showMessageDialog(frame, "Registration successfull.");
+					    }
+			    		
+			    	}
+			    	
+			    }); 
+			    
+			    
+			    
 			    
 			    
 			    
