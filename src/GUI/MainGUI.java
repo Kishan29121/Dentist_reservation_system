@@ -11,8 +11,10 @@ import java.util.Map;
 
 public class MainGUI extends JFrame {
 
-private static String STAFF_PASSWORD = "staff123";
+
 private Map<String, String> patientAccounts = new HashMap<>();
+private Map<String, String> doctorAccounts = new HashMap<>();
+private Map<String, String> receptionistAccounts = new HashMap<>();
 private String currentProfile = "";
 
 public MainGUI() {
@@ -125,47 +127,40 @@ public MainGUI() {
             registrationButton.setVisible(false);
         }
     });
-
-    // Add action listener to the login button
+    
     loginButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             String username = userText.getText();
             String password = new String(passwordText.getPassword());
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(panel, "Please enter both username and password");
+                JOptionPane.showMessageDialog(frame, "Please enter both ID and Password.");
             } else {
-                if (currentProfile.equals("staff")) {
-                    if (password.equals(STAFF_PASSWORD)) {
-                        JOptionPane.showMessageDialog(panel, "Login Successful as Staff");
+                if (currentProfile.equals("Patient")) {
+                    if (patientAccounts.containsKey(username) && patientAccounts.get(username).equals(password)) {
+                        JOptionPane.showMessageDialog(frame, "Login successful as patient.");
                     } else {
-                        JOptionPane.showMessageDialog(panel, "Invalid password for Staff");
+                        JOptionPane.showMessageDialog(frame, "Invalid username or password for patient.");
                     }
-                }else if (currentProfile.equals("patient")) {
-                    String storedPassword = patientAccounts.get(username);
-                    if (storedPassword != null && storedPassword.equals(password)) {
-                        JOptionPane.showMessageDialog(panel, "Login Successful as Patient");
+                } else if (currentProfile.equals("Doctor")) {
+                    if (doctorAccounts.containsKey(username) && doctorAccounts.get(username).equals(password)) {
+                        JOptionPane.showMessageDialog(frame, "Login successful as Doctor.");
                     } else {
-                        JOptionPane.showMessageDialog(panel, "Invalid username or password for Patient");
+                        JOptionPane.showMessageDialog(frame, "Invalid username or password for Doctor.");
                     }
-                
-                	
-                } else if (currentProfile.equals("doctor")) {
-                    if (password.equals("doctor123")) {
-                        JOptionPane.showMessageDialog(panel, "Login Successful as Doctor");
+                } else if (currentProfile.equals("Receptionist")) {
+                    if (receptionistAccounts.containsKey(username) && receptionistAccounts.get(username).equals(password)) {
+                        JOptionPane.showMessageDialog(frame, "Login successful as receptionist.");
                     } else {
-                        JOptionPane.showMessageDialog(panel, "Invalid password for Doctor");
-                    }
-                } else if (currentProfile.equals("receptionist")) {
-                    if (password.equals("receptionist123")) {
-                        JOptionPane.showMessageDialog(panel, "Login Successful as Receptionist");
-                    } else {
-                        JOptionPane.showMessageDialog(panel, "Invalid password for Receptionist");
+                        JOptionPane.showMessageDialog(frame, "Invalid username or password for receptionist.");
                     }
                 }
             }
         }
     });
+
+ 
+   
     
     registrationButton.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -233,7 +228,7 @@ public MainGUI() {
 			    		String BirthDate = DOB.getText();
 			    		String PhoneNumber = Phonenumber.getText();
 			    		String Email = EmailID.getText();
-			    		String Password = passwordLabel.getText();
+			    		String Password = PasswordText.getText();
 			    		
 			    		if (name.isEmpty() || BirthDate.isEmpty() || PhoneNumber.isEmpty() || Email.isEmpty() || Password.isEmpty()) {
 					    	JOptionPane.showMessageDialog(frame, "Please fill up all the fields.");
@@ -268,8 +263,8 @@ public MainGUI() {
             String oldPassword = new String(passwordText.getPassword());
             String newPassword = JOptionPane.showInputDialog(panel, "Enter new password");
 
-            if (oldPassword.equals(STAFF_PASSWORD) && newPassword != null) {
-                STAFF_PASSWORD = newPassword;
+            if (oldPassword.equals(newPassword) && newPassword != null) {
+                oldPassword = newPassword;
                 JOptionPane.showMessageDialog(panel, "Password changed successfully");
             } else {
                 JOptionPane.showMessageDialog(panel, "Invalid old password or new password is empty");
