@@ -1,6 +1,7 @@
 package GUI;
 
 import javax.swing.*;
+import models.Patientmodel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,11 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainGUI extends JFrame {
+	
 
-
-private Map<String, String> patientAccounts = new HashMap<>();
-private Map<String, String> doctorAccounts = new HashMap<>();
-private Map<String, String> receptionistAccounts = new HashMap<>();
+private Patientmodel Patientmodel;
 private String currentProfile = "";
 
 public MainGUI() {
@@ -61,7 +60,7 @@ public MainGUI() {
     loginPanel.add(fieldsPanel);
 
     // Create login form fields
-    JLabel userLabel = new JLabel("Patient ID: ");
+    JLabel userLabel = new JLabel("Email: ");
     userLabel.setBounds(10, 20, 120, 25);
     fieldsPanel.add(userLabel);
 
@@ -103,7 +102,7 @@ public MainGUI() {
 
     doctorButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Doctor ID: ");
+            userLabel.setText("Email: ");
             passwordLabel.setText("Password: ");
             currentProfile = "doctor";
             registrationButton.setVisible(false);
@@ -112,7 +111,7 @@ public MainGUI() {
     
     patientButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Patient ID: ");
+            userLabel.setText("Email: ");
             passwordLabel.setText("Password: ");
             currentProfile = "patient";
             registrationButton.setVisible(true);
@@ -121,7 +120,7 @@ public MainGUI() {
 
     receptionistButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Receptionist ID: ");
+            userLabel.setText("Email: ");
             passwordLabel.setText("Password: ");
             currentProfile = "receptionist";
             registrationButton.setVisible(false);
@@ -136,25 +135,15 @@ public MainGUI() {
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter both ID and Password.");
             } else {
-                if (currentProfile.equals("Patient")) {
-                    if (patientAccounts.containsKey(username) && patientAccounts.get(username).equals(password)) {
+            	switch (currentProfile) {
+                case "patient":
+                    if (Patientmodel.loginPatient(username, password)) {
                         JOptionPane.showMessageDialog(frame, "Login successful as patient.");
                     } else {
                         JOptionPane.showMessageDialog(frame, "Invalid username or password for patient.");
                     }
-                } else if (currentProfile.equals("Doctor")) {
-                    if (doctorAccounts.containsKey(username) && doctorAccounts.get(username).equals(password)) {
-                        JOptionPane.showMessageDialog(frame, "Login successful as Doctor.");
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Invalid username or password for Doctor.");
-                    }
-                } else if (currentProfile.equals("Receptionist")) {
-                    if (receptionistAccounts.containsKey(username) && receptionistAccounts.get(username).equals(password)) {
-                        JOptionPane.showMessageDialog(frame, "Login successful as receptionist.");
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Invalid username or password for receptionist.");
-                    }
-                }
+                    break;
+            	}
             }
         }
     });
@@ -164,14 +153,14 @@ public MainGUI() {
     
     registrationButton.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			JFrame frame = new JFrame("Registration Form");
-			    frame.setSize(450, 300);
-			    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			JFrame registrationFrame = new JFrame("Registration Form");
+			 registrationFrame.setSize(450, 300);
+			 registrationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			    
 			    JPanel registerpanel = new JPanel();
 			    registerpanel.setLayout(new BorderLayout());
-			    frame.add(registerpanel, BorderLayout.CENTER);
-			    frame.setVisible(true);
+			    registrationFrame.add(registerpanel, BorderLayout.CENTER);
+			    registrationFrame.setVisible(true);
 			    
 			    
 			    JPanel registerFieldpanel = new JPanel();
@@ -227,29 +216,39 @@ public MainGUI() {
 			    		String name = nameText.getText();
 			    		String BirthDate = DOB.getText();
 			    		String PhoneNumber = Phonenumber.getText();
+			    		int Phonenumber = Integer.parseInt(PhoneNumber);
 			    		String Email = EmailID.getText();
 			    		String Password = PasswordText.getText();
 			    		
-			    		if (name.isEmpty() || BirthDate.isEmpty() || PhoneNumber.isEmpty() || Email.isEmpty() || Password.isEmpty()) {
-					    	JOptionPane.showMessageDialog(frame, "Please fill up all the fields.");
-					    } else {
-					    	JOptionPane.showMessageDialog(frame, "Registration successfull.");
-					    }
-			    		
+			    		if (Email.isEmpty() || Password.isEmpty()) {
+	                        JOptionPane.showMessageDialog(registrationFrame, "Please fill all the fields.");
+	                    } else {
+	                        boolean registrationSuccessful = false;
+	    
+	                        // Check current profile to register in the appropriate model
+	                        if (currentProfile.equals("patient")) {
+	                            registrationSuccessful = Patientmodel.registerPatient(name, BirthDate, Phonenumber,  Email, Password);
+	                            
+	                            if (registrationSuccessful) {
+		                            JOptionPane.showMessageDialog(registrationFrame, "Registration successful!");
+		                            registrationFrame.dispose(); // Close the registration form
+		                        } else {
+		
+		                            JOptionPane.showMessageDialog(registrationFrame, "Email already registered.");
+		                        }
+	                        } else if (currentProfile.equals("doctor")) {
+	                            
+	                        } else if (currentProfile.equals("receptionist")) {
+	                           
+	                        }
+	    
+	                       
+	                    }
 			    	}
 			    	
 			    }); 
 			    
-			    
-			    
-			    
-			    
-			    
-
-			    
-			
-			
-			
+			   
 		}
     	
     });
