@@ -13,10 +13,11 @@ import java.util.Map;
 public class MainGUI extends JFrame {
 	
 
-private Patientmodel Patientmodel;
-private String currentProfile = "";
+private Patientmodel patientmodel;
+private String currentProfile = "Patient";
 
 public MainGUI() {
+	patientmodel = new Patientmodel();
     JFrame frame = this;
     frame.setSize(450, 300);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,7 +105,7 @@ public MainGUI() {
         public void actionPerformed(ActionEvent e) {
             userLabel.setText("Email: ");
             passwordLabel.setText("Password: ");
-            currentProfile = "doctor";
+            currentProfile = "Doctor";
             registrationButton.setVisible(false);
         }
     });
@@ -113,7 +114,7 @@ public MainGUI() {
         public void actionPerformed(ActionEvent e) {
             userLabel.setText("Email: ");
             passwordLabel.setText("Password: ");
-            currentProfile = "patient";
+            currentProfile = "Patient";
             registrationButton.setVisible(true);
         }
     });
@@ -122,7 +123,7 @@ public MainGUI() {
         public void actionPerformed(ActionEvent e) {
             userLabel.setText("Email: ");
             passwordLabel.setText("Password: ");
-            currentProfile = "receptionist";
+            currentProfile = "Receptionist";
             registrationButton.setVisible(false);
         }
     });
@@ -136,9 +137,13 @@ public MainGUI() {
                 JOptionPane.showMessageDialog(frame, "Please enter both ID and Password.");
             } else {
             	switch (currentProfile) {
-                case "patient":
-                    if (Patientmodel.loginPatient(username, password)) {
-                        JOptionPane.showMessageDialog(frame, "Login successful as patient.");
+                case "Patient":
+                    if (patientmodel.loginPatient(username, password)) {
+                    	JPanel patientGUI = new PatientGUI();
+                    	getContentPane().removeAll();
+                        getContentPane().add(patientGUI);
+                        revalidate();
+                        repaint();
                     } else {
                         JOptionPane.showMessageDialog(frame, "Invalid username or password for patient.");
                     }
@@ -226,20 +231,22 @@ public MainGUI() {
 	                        boolean registrationSuccessful = false;
 	    
 	                        // Check current profile to register in the appropriate model
-	                        if (currentProfile.equals("patient")) {
-	                            registrationSuccessful = Patientmodel.registerPatient(name, BirthDate, Phonenumber,  Email, Password);
+	                        if (currentProfile.equals("Patient")) {
+	                            registrationSuccessful = patientmodel.registerPatient(name, BirthDate, Phonenumber,  Email, Password);
 	                            
-	                            if (registrationSuccessful) {
-		                            JOptionPane.showMessageDialog(registrationFrame, "Registration successful!");
-		                            registrationFrame.dispose(); // Close the registration form
-		                        } else {
-		
-		                            JOptionPane.showMessageDialog(registrationFrame, "Email already registered.");
-		                        }
+	                            
 	                        } else if (currentProfile.equals("doctor")) {
 	                            
 	                        } else if (currentProfile.equals("receptionist")) {
 	                           
+	                        }
+	                        
+	                        if (registrationSuccessful) {
+	                            JOptionPane.showMessageDialog(registrationFrame, "Registration successful!");
+	                            registrationFrame.dispose(); // Close the registration form
+	                        } else {
+	
+	                            JOptionPane.showMessageDialog(registrationFrame, "Email already registered.");
 	                        }
 	    
 	                       
@@ -277,6 +284,8 @@ public MainGUI() {
             int result = JOptionPane.showConfirmDialog(panel, "Are you sure you want to exit?");
             if (result == JOptionPane.YES_OPTION) {
                 System.exit(0);
+            } else  { 
+            	System.exit(DO_NOTHING_ON_CLOSE);
             }
         }
     });

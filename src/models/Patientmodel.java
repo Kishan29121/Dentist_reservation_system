@@ -1,36 +1,53 @@
 package models;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Patientmodel {
-	
-	private Map<String, Patient> patientAccounts;
+    private List<Patient> patientList;
 
     public Patientmodel() {
-        patientAccounts = new HashMap<>();
+        patientList = new ArrayList<>();
+        loadPatients(); // Load patients from file when the model is created
     }
 
     public boolean loginPatient(String email, String password) {
-    	if (patientAccounts.containsKey(email)) {
-    		Patient patient = patientAccounts.get(email);
-    		return patient.getPassword().equals(password);
-    	}
-    	else {
-    		return false;
-    	}
-    	
-        
+        for (Patient patient : patientList) {
+            if (patient.getEmail().equals(email) && patient.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    // Method to register a new patient
-    public boolean registerPatient(String name, String dob, int phoneNumber, String email, String password) {
-        if (patientAccounts.containsKey(email)) {
-            return false;  // Email already exit
+    public boolean registerPatient(String name, String birthDate, int phoneNumber, String email, String password) {
+        for (Patient patient : patientList) {
+            if (patient.getEmail().equals(email)) {
+                return false;  // Email already exists
+            }
         }
-        Patient PatientDetail = new Patient(name, dob, phoneNumber, email, password);
-        patientAccounts.put(email, PatientDetail);
+        patientList.add(new Patient(name, birthDate, phoneNumber, email, password));
+        savePatients(); // Save patients to file after registration
         return true;  // Registration successful
     }
 
+    private void savePatients() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("patients.ser"))) {
+            oos.writeObject(patientList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadPatients() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("patients.ser"))) {
+            patientList = (List<Patient>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            // File not found, initializing with empty list
+            patientList = new ArrayList<>();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
