@@ -208,7 +208,7 @@ public MainGUI() {
 			    PasswordLabel.setBounds(50, 150, 120, 25);
 			    registerFieldpanel.add(PasswordLabel);
 			    
-			    JTextField PasswordText = new JTextField(25);
+			    JPasswordField PasswordText = new JPasswordField(25);
 			    PasswordText.setBounds(150, 150, 230, 25);
 			    registerFieldpanel.add(PasswordText);
 			    
@@ -223,7 +223,8 @@ public MainGUI() {
 			    		String PhoneNumber = Phonenumber.getText();
 			    		int Phonenumber = Integer.parseInt(PhoneNumber);
 			    		String Email = EmailID.getText();
-			    		String Password = PasswordText.getText();
+			    		char[] passwordChars = PasswordText.getPassword();
+		                String Password = new String(passwordChars);
 			    		
 			    		if (Email.isEmpty() || Password.isEmpty()) {
 	                        JOptionPane.showMessageDialog(registrationFrame, "Please fill all the fields.");
