@@ -1,13 +1,25 @@
 package models;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Appointment {
+	@JsonProperty("patientName")
     private String patientName;
+
+    @JsonProperty("appointmentDate")
     private Date appointmentDate;
+
+    @JsonProperty("timeSlot")
     private String timeSlot;
+
+    @JsonProperty("problemDescription")
     private String problemDescription;
+    
+    @JsonProperty("status")
     private String status;
+
+    
 
     public Appointment(String patientName, Date appointmentDate, String timeSlot, String problemDescription) {
         this.patientName = patientName;
@@ -16,6 +28,7 @@ public class Appointment {
         this.problemDescription = problemDescription;
         this.status = "Schedule";
     }
+    
 
     // Getters and Setters
     public String getPatientName() {
@@ -25,7 +38,8 @@ public class Appointment {
     public void setPatientName(String patientName) {
         this.patientName = patientName;
     }
-
+    
+    
     public Date getAppointmentDate() {
         return appointmentDate;
     }

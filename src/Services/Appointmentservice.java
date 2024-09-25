@@ -153,7 +153,9 @@ public class Appointmentservice {
     // Save appointments to a JSON file
     private void saveAppointments() {
         try (Writer writer = new FileWriter(APPOINTMENT_FILE)) {
+        	System.out.println(appointments);
             objectMapper.writeValue(writer, appointments);
+            //writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
