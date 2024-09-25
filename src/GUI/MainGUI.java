@@ -1,23 +1,34 @@
 package GUI;
 
 import javax.swing.*;
+
+import models.Dentist;
+import models.Dentistmodel;
 import models.Patientmodel;
+import models.Staff;
+import models.Staffmodel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
-import java.util.Map;
+import GUI.DentistGUI;
+
 
 public class MainGUI extends JFrame {
 	
 
 private Patientmodel patientmodel;
+private Staffmodel staffmodel;
+private Dentistmodel dentistmodel;
 private String currentProfile = "Patient";
 
+
 public MainGUI() {
+
 	patientmodel = new Patientmodel();
+    dentistmodel = new Dentistmodel();
+    staffmodel = new Staffmodel();
     JFrame frame = this;
     frame.setSize(450, 300);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,8 +60,8 @@ public MainGUI() {
     profilePanel.add(staffProfilePanel);
 
     // Create staff profile selection buttons
-    JButton doctorButton = new JButton("Doctor");
-    JButton receptionistButton = new JButton("Receptionist");
+    JButton doctorButton = new JButton("Dentist");
+    JButton receptionistButton = new JButton("Staff");
 
     profilePanel.add(doctorButton);
     profilePanel.add(receptionistButton);
@@ -103,17 +114,17 @@ public MainGUI() {
 
     doctorButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Email: ");
+            userLabel.setText("Username: ");
             passwordLabel.setText("Password: ");
-            currentProfile = "Doctor";
+            currentProfile = "Dentist";
             registrationButton.setVisible(false);
         }
     });
     
     patientButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Email: ");
-            passwordLabel.setText("Password: ");
+            userLabel.setText("Email:");
+            passwordLabel.setText("Password:");
             currentProfile = "Patient";
             registrationButton.setVisible(true);
         }
@@ -121,17 +132,19 @@ public MainGUI() {
 
     receptionistButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            userLabel.setText("Email: ");
-            passwordLabel.setText("Password: ");
-            currentProfile = "Receptionist";
+            userLabel.setText("Username: ");
+            passwordLabel.setText("Password:");
+            currentProfile = "Staff";
             registrationButton.setVisible(false);
         }
     });
     
     loginButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            String username = userText.getText();
-            String password = new String(passwordText.getPassword());
+            String username = userText.getText();//staff3
+            String password = new String(passwordText.getPassword());//password3
+            System.out.println("Username:"+ username);
+            System.out.println("Password:"+password);
 
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter both ID and Password.");
@@ -148,7 +161,30 @@ public MainGUI() {
                         JOptionPane.showMessageDialog(frame, "Invalid username or password for patient.");
                     }
                     break;
-            	}
+            	
+                case "Dentist":
+                if (dentistmodel.loginDentist(username, password)) {
+                    JPanel dentistGUI = new DentistGUI(null);
+                    getContentPane().removeAll();
+                    getContentPane().add(dentistGUI);
+                    revalidate();
+                    repaint();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Invalid username or password for dentist.");
+                }
+                break;
+               case "Staff":
+                if (staffmodel.loginStaff(username, password)) {
+                    JPanel staffGUI = new DentistGUI(null); // Assuming StaffGUI is a valid class
+                    getContentPane().removeAll();
+                    getContentPane().add(staffGUI);
+                    revalidate();
+                    repaint();
+                }
+                else{
+                    JOptionPane.showMessageDialog(frame, "Invalid username or password for staff.");
+                }
+            }
             }
         }
     });
@@ -208,7 +244,7 @@ public MainGUI() {
 			    PasswordLabel.setBounds(50, 150, 120, 25);
 			    registerFieldpanel.add(PasswordLabel);
 			    
-			    JPasswordField PasswordText = new JPasswordField(25);
+			    JTextField PasswordText = new JTextField(25);
 			    PasswordText.setBounds(150, 150, 230, 25);
 			    registerFieldpanel.add(PasswordText);
 			    
@@ -223,8 +259,7 @@ public MainGUI() {
 			    		String PhoneNumber = Phonenumber.getText();
 			    		int Phonenumber = Integer.parseInt(PhoneNumber);
 			    		String Email = EmailID.getText();
-			    		char[] passwordChars = PasswordText.getPassword();
-		                String Password = new String(passwordChars);
+			    		String Password = PasswordText.getText();
 			    		
 			    		if (Email.isEmpty() || Password.isEmpty()) {
 	                        JOptionPane.showMessageDialog(registrationFrame, "Please fill all the fields.");
@@ -236,9 +271,9 @@ public MainGUI() {
 	                            registrationSuccessful = patientmodel.registerPatient(name, BirthDate, Phonenumber,  Email, Password);
 	                            
 	                            
-	                        } else if (currentProfile.equals("doctor")) {
+	                        } else if (currentProfile.equals("Dentist")) {
 	                            
-	                        } else if (currentProfile.equals("receptionist")) {
+	                        } else if (currentProfile.equals("Staff")) {
 	                           
 	                        }
 	                        

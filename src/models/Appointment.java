@@ -1,31 +1,71 @@
 package models;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Appointment {
-	private Patient patient;
-	private LocalDateTime appointmentDateTime;
-	private boolean isConfirmed;
-	
-	public Appointment(Patient patient, LocalDateTime appointmentDateTime) {
-		this.patient = patient;
-		this.appointmentDateTime = appointmentDateTime;
-		this.isConfirmed = false;
-	}
-	
-	public Patient getPatient() {return patient;}
-	public void setPatient(Patient patient) {this.patient = patient; }
-	
-	public LocalDateTime getAppointmentDateTime() {return appointmentDateTime;}
-	public void setAppointmentDateTime(LocalDateTime appointmentDateTime) {this.appointmentDateTime = appointmentDateTime;}
-	
-	public boolean isConfirmed() { return isConfirmed;}
-	public void setConfirmed(boolean confirmed) {isConfirmed = confirmed;}
-	
-	public void printAppointmentDetails() {
-		System.out.println("Appointment person: " + patient.getName());
-		System.out.println("Appointment Date and Time: " + appointmentDateTime);
-		System.out.println("Confirmed: " + isConfirmed);
-	}
+    private String patientName;
+    private Date appointmentDate;
+    private String timeSlot;
+    private String problemDescription;
+    private String status;
 
+    public Appointment(String patientName, Date appointmentDate, String timeSlot, String problemDescription) {
+        this.patientName = patientName;
+        this.appointmentDate = appointmentDate;
+        this.timeSlot = timeSlot;
+        this.problemDescription = problemDescription;
+        this.status = "Schedule";
+    }
+
+    // Getters and Setters
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public Date getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public String getTimeSlot() {
+        return timeSlot;
+    }
+
+    public void setTimeSlot(String timeSlot) {
+        this.timeSlot = timeSlot;
+    }
+
+    public String getProblemDescription() {
+        return problemDescription;
+    }
+
+    public String setStatus(String status ) {
+        return status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+    public void setProblemDescription(String problemDescription) {
+        this.problemDescription = problemDescription;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "patientName='" + patientName + '\'' +
+                ", appointmentDate=" + appointmentDate +
+                ", timeSlot='" + timeSlot + '\'' +
+                ", problemDescription='" + problemDescription + '\'' +
+                '}';
+    }
 }
