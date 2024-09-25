@@ -1,24 +1,24 @@
 package Services;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import models.Appointment;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 
 public class Appointmentservice {
     private Map<String, List<Appointment>> appointments;  // Store appointments (Date -> Appointments)
     private SimpleDateFormat dateFormat;
     private static final String APPOINTMENT_FILE = "appointments.json";  // File to store appointments
+    private ObjectMapper objectMapper; // Jackson ObjectMapper
 
     public Appointmentservice() {
         appointments = new HashMap<>();
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        objectMapper = new ObjectMapper(); // Initialize ObjectMapper
         loadAppointments();  // Load existing appointments from JSON file on initialization
     }
 
@@ -153,8 +153,7 @@ public class Appointmentservice {
     // Save appointments to a JSON file
     private void saveAppointments() {
         try (Writer writer = new FileWriter(APPOINTMENT_FILE)) {
-            Gson gson = new Gson();
-            gson.toJson(appointments, writer);
+            objectMapper.writeValue(writer, appointments);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,9 +167,7 @@ public class Appointmentservice {
         }
 
         try (Reader reader = new FileReader(file)) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<Map<String, List<Appointment>>>(){}.getType();
-            appointments = gson.fromJson(reader, type);
+            appointments = objectMapper.readValue(reader, new TypeReference<Map<String, List<Appointment>>>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -9,5 +9,5 @@ module KishanPanchalHW1 {
 	requires jdk.httpserver;
 	requires jcalendar;
 	requires com.google.gson;
-
+	requires com.fasterxml.jackson.databind;
 }
