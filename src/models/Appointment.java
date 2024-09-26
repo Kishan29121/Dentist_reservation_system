@@ -2,6 +2,7 @@ package models;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Appointment {
 	@JsonProperty("patientName")
@@ -20,13 +21,19 @@ public class Appointment {
     private String status;
 
     
-
-    public Appointment(String patientName, Date appointmentDate, String timeSlot, String problemDescription, String status) {
+    @JsonCreator
+    public Appointment(@JsonProperty("patientName") String patientName,
+            @JsonProperty("appointmentDate") Date appointmentDate,
+            @JsonProperty("timeSlot") String timeSlot,
+            @JsonProperty("problemDescription") String problemDescription,
+            @JsonProperty("status") String status) {
+    	
         this.patientName = patientName;
         this.appointmentDate = appointmentDate;
         this.timeSlot = timeSlot;
         this.problemDescription = problemDescription;
-        this.status = "Schedule";
+        this.status = status;
+        
     }
     
 

@@ -159,7 +159,7 @@ public class PatientGUI extends JPanel {
         String problemDescription = problemDescriptionArea.getText();
     
         // Call the rescheduleAppointment method in the AppointmentService
-        boolean success = appointmentService.rescheduleAppointment(patientName, selectedDate, selectedTime, problemDescription);
+        boolean success = appointmentService.rescheduleAppointment(patientName, selectedDate, selectedTime, problemDescription, null );
     
         if (success) {
             JOptionPane.showMessageDialog(this, "Appointment rescheduled successfully for " + patientName);

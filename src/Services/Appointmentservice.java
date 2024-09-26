@@ -7,40 +7,28 @@ import models.Appointment;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+
 
 public class Appointmentservice {
     private Map<String, List<Appointment>> appointments;  // Store appointments (Date -> Appointments)
     private SimpleDateFormat dateFormat;
     private static final String APPOINTMENT_FILE = "appointments.json";  // File to store appointments
     private ObjectMapper objectMapper; // Jackson ObjectMapper
-    private List<Appointmentlistener> listeners; // List to hold registered listeners
+
 
     public Appointmentservice() {
         appointments = new HashMap<>();
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         objectMapper = new ObjectMapper(); // Initialize ObjectMapper
-        listeners = new ArrayList<>(); // Initialize listener list
+        
         loadAppointments();  // Load existing appointments from JSON file on initialization
     }
 
-    // Method to add a listener
-    public void addAppointmentListener(Appointmentlistener listener) {
-        listeners.add(listener);
-    }
+   
 
-    // Notify all registered listeners when a new appointment is added
-    private void notifyAppointmentAdded(Appointment appointment) {
-        for (Appointmentlistener listener : listeners) {
-            listener.appointmentAdded(appointment);
-        }
-    }
-
-    // Notify all registered listeners when an appointment is canceled
-    private void notifyAppointmentCanceled(Appointment appointment) {
-        for (Appointmentlistener listener : listeners) {
-            listener.appointmentCanceled(appointment);
-        }
-    }
+   
 
     // Method to schedule an appointment
     public boolean scheduleAppointment(Appointment appointment) {
@@ -60,10 +48,11 @@ public class Appointmentservice {
                 return false;  // Time slot already booked
             }
         }
+        System.out.println("Scheduled Appointment: "+ appointment);
 
         // Add the appointment to the list and set its status
         dailyAppointments.add(appointment);
-        notifyAppointmentAdded(appointment); // Notify listeners of the new appointment
+       
         saveAppointments();  // Save appointments to JSON file after scheduling
         return true;  // Appointment successfully scheduled
     }
@@ -78,6 +67,7 @@ public class Appointmentservice {
         if (!isTimeSlotAvailable(newAppointmentDate, newTimeSlot)) {
             return false; // The time slot is not available for the new appointment
         }
+        System.out.println("Rescheduled Appointment: "+ newAppointment);
 
         // Schedule the new appointment
         return scheduleAppointment(newAppointment); // Schedule the new appointment
@@ -98,20 +88,20 @@ public class Appointmentservice {
                     iterator.remove(); // Remove using iterator to avoid ConcurrentModificationException
                     existingAppointment.setStatus("Canceled"); // Update the status to "Canceled"
 
-                    // Notify listeners of the canceled appointment
-                    notifyAppointmentCanceled(existingAppointment);
+                    
 
                     // If no appointments left for the day, remove the day entry
                     if (dailyAppointments.isEmpty()) {
                         appointments.remove(formattedDate);
                     }
+                    System.out.println("Appointment canceled");
 
-                    saveAppointments();  // Save appointments to JSON file after cancellation
-                    return true;  // Appointment successfully canceled
+                    saveAppointments();  
+                    return true; 
                 }
             }
         }
-        return false;  // No matching appointment found
+        return false;  
     }
 
     // Method to get all appointments
@@ -158,20 +148,20 @@ public class Appointmentservice {
         List<Appointment> dailyAppointments = appointments.getOrDefault(formattedDate, new ArrayList<>());
         for (Appointment appointment : dailyAppointments) {
             if (appointment.getTimeSlot().equals(timeSlot)) {
-                return false;  // Time slot is not available
+                return false; 
             }
         }
-        return true;  // Time slot is available
+        return true;  
     }
 
     // Method to check if the appointment is within the cancellation/rescheduling time frame
     public boolean isWithinTimeFrame(Date appointmentDate) {
         long currentTime = System.currentTimeMillis();
         long appointmentTime = appointmentDate.getTime();
-        long timeDiff = appointmentTime - currentTime; // Time difference in milliseconds
+        long timeDiff = appointmentTime - currentTime; 
 
-        // Assuming 24 hours time frame
-        return timeDiff <= 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+       
+        return timeDiff <= 24 * 60 * 60 * 1000;
     }
 
     // Save appointments to a JSON file
@@ -185,16 +175,19 @@ public class Appointmentservice {
     }
 
     // Load appointments from the JSON file
-    private void loadAppointments() {
+    public Map<String, List<Appointment>> loadAppointments() {
         File file = new File(APPOINTMENT_FILE);
+        System.out.println(file);
         if (!file.exists()) {
-            return; // File doesn't exist, nothing to load
+            return null; 
         }
 
         try (Reader reader = new FileReader(file)) {
             appointments = objectMapper.readValue(reader, new TypeReference<Map<String, List<Appointment>>>(){});
+            return appointments;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
 }

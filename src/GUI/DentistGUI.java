@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class DentistGUI extends JPanel {
     private JTable appointmentTable;
@@ -101,20 +102,24 @@ public class DentistGUI extends JPanel {
     // Method to load static appointments into the table
     private void loadStaticAppointments() {
     	Appointmentservice appointmentservice = new Appointmentservice();
+    	
        
 
-    	List<Appointment> appointments = appointmentservice.getAllAppointments();
+    	Map<String, List<Appointment>> appointments = appointmentservice.loadAppointments();
+    	System.out.println(appointments);
 
         // Populate the table with the static appointment data, including the problem
-        for (Appointment appointment : appointments) {
-            tableModel.addRow(new Object[]{
-                appointment.getAppointmentDate().toString(),
-                appointment.getTimeSlot(),
-                appointment.getPatientName(),
-                appointment.getProblemDescription(),
-                appointment.getStatus()
-            });
-        
+    	for (Map.Entry<String, List<Appointment>> entry : appointments.entrySet()) {
+            List<Appointment> appointmentList = entry.getValue(); // Get the list of appointments for this date
+            for (Appointment appointment : appointmentList) { // Now iterate over the appointments
+                tableModel.addRow(new Object[]{
+                    dateFormat.format(appointment.getAppointmentDate()), // Format the date
+                    appointment.getTimeSlot(),
+                    appointment.getPatientName(),
+                    appointment.getProblemDescription(),
+                    appointment.getStatus()
+                });
+            }
         }
     }
 

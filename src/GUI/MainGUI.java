@@ -164,7 +164,7 @@ public MainGUI() {
             	
                 case "Dentist":
                 if (dentistmodel.loginDentist(username, password)) {
-                    JPanel dentistGUI = new DentistGUI(null);
+                    JPanel dentistGUI = new DentistGUI();
                     getContentPane().removeAll();
                     getContentPane().add(dentistGUI);
                     revalidate();
@@ -175,7 +175,7 @@ public MainGUI() {
                 break;
                case "Staff":
                 if (staffmodel.loginStaff(username, password)) {
-                    JPanel staffGUI = new DentistGUI(null); // Assuming StaffGUI is a valid class
+                    JPanel staffGUI = new DentistGUI(); // Assuming StaffGUI is a valid class
                     getContentPane().removeAll();
                     getContentPane().add(staffGUI);
                     revalidate();
