@@ -1,138 +1,130 @@
 package GUI;
 
 import models.Appointment; // Import your Appointment model
-import Services.Appointmentservice; // Import the AppointmentService class
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import Services.Appointmentservice;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-// import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DentistGUI extends JPanel {
     private JTable appointmentTable;
     private DefaultTableModel tableModel;
-    private Appointmentservice appointmentService; // Service to fetch appointments
+    private SimpleDateFormat dateFormat; // Date format for displaying dates
 
-    public DentistGUI(Appointmentservice appointmentService) {
-        this.appointmentService = appointmentService; // Initialize the appointment service
+    public DentistGUI() {
+        setLayout(new BorderLayout(10, 10)); // Add spacing around the borders
 
-        // Create table model and table
-        tableModel = new DefaultTableModel(new String[]{"Date", "Time", "Patient", "Status"}, 0);
+        // Create date formatter for displaying Date objects
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        // Create table model and table with a new "Problem" column
+        tableModel = new DefaultTableModel(new String[]{"Date", "Time", "Patient", "Problem", "Status"}, 0);
         appointmentTable = new JTable(tableModel);
-        
-        // Load actual appointment data into the table
-        //loadAppointments();
+        appointmentTable.setRowHeight(25); // Set row height for better visibility
+        appointmentTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        appointmentTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Create buttons
+        loadStaticAppointments(); // Load static appointments
+
+        // Create buttons with proper padding and font
         JButton acceptButton = new JButton("Accept");
+        acceptButton.setFont(new Font("Arial", Font.BOLD, 14));
         JButton rescheduleButton = new JButton("Reschedule");
+        rescheduleButton.setFont(new Font("Arial", Font.BOLD, 14));
         JButton cancelButton = new JButton("Cancel");
+        cancelButton.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Button actions
         acceptButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Logic to accept the appointment
                 int selectedRow = appointmentTable.getSelectedRow();
                 if (selectedRow != -1) {
-                    tableModel.setValueAt("Accepted", selectedRow, 3);
-                    // You may want to update the Appointment status in the AppointmentService here
+                    tableModel.setValueAt("Accepted", selectedRow, 4);
                 } else {
                     JOptionPane.showMessageDialog(null, "Please select an appointment to accept.");
                 }
             }
         });
 
-        // rescheduleButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         // Logic to reschedule the appointment
-        //         int selectedRow = appointmentTable.getSelectedRow();
-        //         if (selectedRow != -1) {
-        //             String newDate = JOptionPane.showInputDialog("Enter new date (YYYY-MM-DD):");
-        //             String newTime = JOptionPane.showInputDialog("Enter new time (HH:MM AM/PM):");
-        //             if (newDate != null && newTime != null) {
-        //                 String patientName = (String) tableModel.getValueAt(selectedRow, 2); // Get patient name
-        //                 // Create new appointment object to pass to AppointmentService
-        //                 Appointment newAppointment = new Appointment(patientName, parseDate(newDate), newTime, "");
-        //                 newAppointment.setStatus("Rescheduled");
-
-        //                 // Assuming you have a method to handle rescheduling in AppointmentService
-        //                 boolean success = appointmentService.rescheduleAppointment(null, newAppointment); // Pass the old appointment if needed
-        //                 if (success) {
-        //                     tableModel.setValueAt(newDate, selectedRow, 0);
-        //                     tableModel.setValueAt(newTime, selectedRow, 1);
-        //                     tableModel.setValueAt("Rescheduled", selectedRow, 3);
-        //                 } else {
-        //                     JOptionPane.showMessageDialog(null, "Failed to reschedule the appointment. The selected time slot may already be booked.");
-        //                 }
-        //             }
-        //         } else {
-        //             JOptionPane.showMessageDialog(null, "Please select an appointment to reschedule.");
-        //         }
-        //     }
-        // });
+        rescheduleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = appointmentTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String newDate = JOptionPane.showInputDialog("Enter new date (YYYY-MM-DD):");
+                    String newTime = JOptionPane.showInputDialog("Enter new time (HH:MM AM/PM):");
+                    if (newDate != null && newTime != null) {
+                        tableModel.setValueAt(newDate, selectedRow, 0);
+                        tableModel.setValueAt(newTime, selectedRow, 1);
+                        tableModel.setValueAt("Rescheduled", selectedRow, 4);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select an appointment to reschedule.");
+                }
+            }
+        });
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Logic to cancel the appointment
                 int selectedRow = appointmentTable.getSelectedRow();
                 if (selectedRow != -1) {
-                    tableModel.setValueAt("Canceled", selectedRow, 3);
-                    // Update the Appointment status in the AppointmentService here as needed
+                    tableModel.setValueAt("Canceled", selectedRow, 4);
                 } else {
                     JOptionPane.showMessageDialog(null, "Please select an appointment to cancel.");
                 }
             }
         });
 
-        // Layout setup
-        JPanel buttonPanel = new JPanel();
+        // Layout for buttons (centered and spaced)
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.add(acceptButton);
         buttonPanel.add(rescheduleButton);
         buttonPanel.add(cancelButton);
-        
-        add(new JScrollPane(appointmentTable), BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+
+        // Add components to the main panel
+        add(new JScrollPane(appointmentTable), BorderLayout.CENTER); // Table in the center
+        add(buttonPanel, BorderLayout.SOUTH); // Buttons at the bottom
     }
 
-    // Method to load appointments from the AppointmentService
-   /* private void loadAppointments() {
-        // Assuming you have a method to get all appointments in AppointmentService
-        List<Appointment> appointments = appointmentService.getAllAppointments(); // Implement this in AppointmentService
+    // Method to load static appointments into the table
+    private void loadStaticAppointments() {
+    	Appointmentservice appointmentservice = new Appointmentservice();
+       
 
+    	List<Appointment> appointments = appointmentservice.getAllAppointments();
+
+        // Populate the table with the static appointment data, including the problem
         for (Appointment appointment : appointments) {
             tableModel.addRow(new Object[]{
-                appointment.getAppointmentDate(), // Format date as needed
+                appointment.getAppointmentDate().toString(),
                 appointment.getTimeSlot(),
                 appointment.getPatientName(),
+                appointment.getProblemDescription(),
                 appointment.getStatus()
             });
+        
         }
     }
 
-    // Simple method to parse date from string (consider using a proper date formatter)
-    // private Date parseDate(String dateString) {
-    //     try {
-    //         return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-    //     } catch (ParseException e) {
-    //         e.printStackTrace();
-    //         return null;
-    //     }
-    // }*/
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Appointmentservice appointmentService = new Appointmentservice(); // Initialize your AppointmentService
-            DentistGUI gui = new DentistGUI(appointmentService);
+            DentistGUI gui = new DentistGUI();
             JFrame frame = new JFrame("Dentist Appointments");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.add(gui);
-            frame.setSize(600, 400);
+            frame.setSize(700, 500);
             frame.setVisible(true);
         });
     }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import models.Appointment;
 
 import java.io.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -14,12 +13,33 @@ public class Appointmentservice {
     private SimpleDateFormat dateFormat;
     private static final String APPOINTMENT_FILE = "appointments.json";  // File to store appointments
     private ObjectMapper objectMapper; // Jackson ObjectMapper
+    private List<Appointmentlistener> listeners; // List to hold registered listeners
 
     public Appointmentservice() {
         appointments = new HashMap<>();
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         objectMapper = new ObjectMapper(); // Initialize ObjectMapper
+        listeners = new ArrayList<>(); // Initialize listener list
         loadAppointments();  // Load existing appointments from JSON file on initialization
+    }
+
+    // Method to add a listener
+    public void addAppointmentListener(Appointmentlistener listener) {
+        listeners.add(listener);
+    }
+
+    // Notify all registered listeners when a new appointment is added
+    private void notifyAppointmentAdded(Appointment appointment) {
+        for (Appointmentlistener listener : listeners) {
+            listener.appointmentAdded(appointment);
+        }
+    }
+
+    // Notify all registered listeners when an appointment is canceled
+    private void notifyAppointmentCanceled(Appointment appointment) {
+        for (Appointmentlistener listener : listeners) {
+            listener.appointmentCanceled(appointment);
+        }
     }
 
     // Method to schedule an appointment
@@ -43,14 +63,15 @@ public class Appointmentservice {
 
         // Add the appointment to the list and set its status
         dailyAppointments.add(appointment);
+        notifyAppointmentAdded(appointment); // Notify listeners of the new appointment
         saveAppointments();  // Save appointments to JSON file after scheduling
         return true;  // Appointment successfully scheduled
     }
 
     // Method to reschedule an appointment
-    public boolean rescheduleAppointment(String patientName, Date newAppointmentDate, String newTimeSlot, String problemDescription) {
+    public boolean rescheduleAppointment(String patientName, Date newAppointmentDate, String newTimeSlot, String problemDescription, String satus) {
         // Create a new appointment object
-        Appointment newAppointment = new Appointment(patientName, newAppointmentDate, newTimeSlot, problemDescription);
+        Appointment newAppointment = new Appointment(patientName, newAppointmentDate, newTimeSlot, problemDescription, satus);
         newAppointment.setStatus("Rescheduled"); // Set the status to "Rescheduled"
 
         // Check if the new time slot is available
@@ -76,6 +97,9 @@ public class Appointmentservice {
                 if (existingAppointment.getTimeSlot().equals(appointment.getTimeSlot())) {
                     iterator.remove(); // Remove using iterator to avoid ConcurrentModificationException
                     existingAppointment.setStatus("Canceled"); // Update the status to "Canceled"
+
+                    // Notify listeners of the canceled appointment
+                    notifyAppointmentCanceled(existingAppointment);
 
                     // If no appointments left for the day, remove the day entry
                     if (dailyAppointments.isEmpty()) {
@@ -153,9 +177,8 @@ public class Appointmentservice {
     // Save appointments to a JSON file
     private void saveAppointments() {
         try (Writer writer = new FileWriter(APPOINTMENT_FILE)) {
-        	System.out.println(appointments);
+            System.out.println(appointments);
             objectMapper.writeValue(writer, appointments);
-            //writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

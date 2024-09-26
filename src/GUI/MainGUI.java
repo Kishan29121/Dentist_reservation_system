@@ -314,17 +314,7 @@ public MainGUI() {
         }
     });
 
-    // Add window listener to the frame
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-            int result = JOptionPane.showConfirmDialog(panel, "Are you sure you want to exit?");
-            if (result == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            } else  { 
-            	System.exit(DO_NOTHING_ON_CLOSE);
-            }
-        }
-    });
+   
 
     // Set the staff profile panel to invisible initially
     staffProfilePanel.setVisible(false);

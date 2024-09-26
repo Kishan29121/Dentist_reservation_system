@@ -21,7 +21,7 @@ public class Appointment {
 
     
 
-    public Appointment(String patientName, Date appointmentDate, String timeSlot, String problemDescription) {
+    public Appointment(String patientName, Date appointmentDate, String timeSlot, String problemDescription, String status) {
         this.patientName = patientName;
         this.appointmentDate = appointmentDate;
         this.timeSlot = timeSlot;

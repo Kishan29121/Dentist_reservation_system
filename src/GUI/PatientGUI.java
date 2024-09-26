@@ -133,7 +133,7 @@ public class PatientGUI extends JPanel {
         String problemDescription = problemDescriptionArea.getText();  // Capture problem description
 
         // Create a new Appointment object
-        Appointment appointment = new Appointment(patientName, selectedDate, selectedTime, problemDescription);
+        Appointment appointment = new Appointment(patientName, selectedDate, selectedTime, problemDescription, " ");
 
         // Use the service to schedule the appointment
         boolean success = appointmentService.scheduleAppointment(appointment);
@@ -181,7 +181,7 @@ public class PatientGUI extends JPanel {
         String selectedTime = (String) timeSlotsDropdown.getSelectedItem();
 
         // Create an appointment object to cancel (in practice, you should retrieve the correct object)
-        Appointment appointment = new Appointment(patientName, selectedDate, selectedTime, "");
+        Appointment appointment = new Appointment(patientName, selectedDate, selectedTime, "", "");
 
         // Use the service to cancel the appointment
         boolean success = appointmentService.cancelAppointment(appointment);
